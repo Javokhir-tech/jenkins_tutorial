@@ -1,7 +1,8 @@
 pipeline {
-    agent any
-    tools {
-        maven 'Maven 3.9'
+    agent {
+        docker {
+            image 'maven:3.9.0-eclipse-temurin-17'
+        }
     }
     stages {
         stage('Initialize') {
@@ -29,6 +30,12 @@ pipeline {
                 echo 'Running Unit Tests...'
                 sh 'mvn test'
                 junit 'target/surefire-reports/*.xml'
+            }
+        }
+        stage('Code Quality') {
+            steps {
+                echo 'Running Code Quality Analysis...'
+                sh 'mvn sonar:sonar'
             }
         }
     }
