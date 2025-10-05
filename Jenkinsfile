@@ -2,6 +2,7 @@ pipeline {
     agent {
         docker {
             image 'maven:3.9.0-eclipse-temurin-17'
+            args '-v maven-cache:/root/.m2'
         }
     }
     stages {
@@ -36,6 +37,12 @@ pipeline {
             steps {
                 echo 'Running Code Quality Analysis...'
                 sh 'mvn sonar:sonar'
+            }
+        }
+        stage('Archive Artifact') {
+            steps {
+                echo 'Archiving Artifact...'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
     }
